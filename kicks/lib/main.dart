@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kicks/Screens/login_screen.dart';
+import 'package:kicks/Screens/signup_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,12 +9,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
- @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(),
+      home: const LoginScreen(),
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignupScreen(),
+      },
     );
   }
-  
 }
-
