@@ -5,10 +5,7 @@ import 'package:kicks/service/auth_api.dart';
 import 'package:kicks/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AuthStatus {
-  unauthenticated,
-  authenticated
-}
+enum AuthStatus { unauthenticated, authenticated }
 
 class AuthViewModel extends ChangeNotifier {
   final AuthApi _authApi;
@@ -23,8 +20,6 @@ class AuthViewModel extends ChangeNotifier {
 
   AuthViewModel({AuthApi? authApi}) : _authApi = authApi ?? AuthApi();
 
-
-
   Future<bool> login(String username, String password) async {
     isLoading = true;
     notifyListeners();
@@ -34,14 +29,17 @@ class AuthViewModel extends ChangeNotifier {
       user = result.user;
       await saveUserTokens(result.accessToken, result.refreshToken);
       authStatus = AuthStatus.authenticated;
+      notifyListeners();
       return true;
     } on ApiError catch (e) {
       errorMessage = e.message;
       authStatus = AuthStatus.unauthenticated;
+      notifyListeners();
       return false;
     } catch (e) {
       errorMessage = e.toString();
       authStatus = AuthStatus.unauthenticated;
+      notifyListeners();
       return false;
     } finally {
       isLoading = false;
@@ -55,13 +53,17 @@ class AuthViewModel extends ChangeNotifier {
     await prefs.setString(REFRESH_TOKEN_KEY, refreshToken);
   }
 
- Future<void> autoLogin() async {
+  Future<void> autoLogin() async {
+    isLoading = true;
+    notifyListeners();
+
     final prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString(ACCESS_TOKEN_KEY);
     String? refreshToken = prefs.getString(REFRESH_TOKEN_KEY);
 
     if (accessToken == null || refreshToken == null) {
       authStatus = AuthStatus.unauthenticated;
+      isLoading = false;
       notifyListeners();
       return;
     }
@@ -82,15 +84,21 @@ class AuthViewModel extends ChangeNotifier {
         return;
       }
     }
+
+    isLoading = false;
     notifyListeners();
   }
 
-Future<void>logout() async{
-  final prefs = await SharedPreferences.getInstance();
-  prefs.remove(ACCESS_TOKEN_KEY);
-  prefs.remove(REFRESH_TOKEN_KEY);
-  authStatus = AuthStatus.unauthenticated;
-  notifyListeners();
-}
+  Future<void> logout() async {
+    isLoading = true;
+    notifyListeners();
 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(ACCESS_TOKEN_KEY);
+    await prefs.remove(REFRESH_TOKEN_KEY);
+
+    authStatus = AuthStatus.unauthenticated;
+    isLoading = false;
+    notifyListeners();
+  }
 }

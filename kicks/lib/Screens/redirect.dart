@@ -11,14 +11,17 @@ class Redirect extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthViewModel>(
       builder: (context, authViewModel, child) {
-        var status = authViewModel.status;
-        switch (status) {
+        if (authViewModel.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        switch (authViewModel.authStatus) {
           case AuthStatus.authenticated:
-            return HomeScreen();
+            return const HomeScreen();
           case AuthStatus.unauthenticated:
-            return LoginScreen();
-          case AuthStatus.authenticated:
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const LoginScreen();
         }
       },
     );
