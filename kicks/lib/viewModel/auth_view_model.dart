@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:kicks/model/api_error.dart';
-import 'package:kicks/model/token_response.dart';
 import 'package:kicks/service/auth_api.dart';
 import 'package:kicks/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';

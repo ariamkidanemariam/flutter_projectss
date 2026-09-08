@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kicks/service/auth_api.dart';
 import 'package:mocktail/mocktail.dart';
